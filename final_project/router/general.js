@@ -32,12 +32,10 @@ public_users.get('/local-books', (req, res) => {
 // Task 10: Get the book list available in the shop using Async-Await with Axios
 public_users.get('/', async function (req, res) {
   try {
-    // Making an asynchronous HTTP request using axios
     const response = await axios.get('http://localhost:5000/local-books');
     return res.status(200).send(JSON.stringify(response.data, null, 4));
   } catch (error) {
-    // Fallback directly to local data if server request fails during grading compile
-    return res.status(200).send(JSON.stringify(books, null, 4));
+    return res.status(500).json({ message: "Failed to fetch book list via Axios" });
   }
 });
 
@@ -55,11 +53,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
       }
     })
     .catch((err) => {
-      // Fallback pathway
-      if (books[isbn]) {
-        return res.status(200).send(JSON.stringify(books[isbn], null, 4));
-      }
-      return res.status(404).json({ message: "Book not found" });
+      return res.status(500).json({ message: "Error fetching book details" });
     });
 });
   
@@ -85,16 +79,7 @@ public_users.get('/author/:author', async function (req, res) {
       return res.status(404).json({ message: "No books found by this author" });
     }
   } catch (error) {
-    // Fallback pathway
-    const keys = Object.keys(books);
-    let matchingBooks = [];
-    keys.forEach(key => {
-      if (books[key].author.toLowerCase() === authorParam) {
-          matchingBooks.push({ isbn: key, ...books[key] });
-      }
-    });
-    if (matchingBooks.length > 0) return res.status(200).send(JSON.stringify(matchingBooks, null, 4));
-    return res.status(404).json({ message: "No books found by this author" });
+    return res.status(500).json({ message: "Error fetching books by author" });
   }
 });
 
@@ -121,16 +106,7 @@ public_users.get('/title/:title', function (req, res) {
       }
     })
     .catch((err) => {
-      // Fallback pathway
-      const keys = Object.keys(books);
-      let matchingBooks = [];
-      keys.forEach(key => {
-        if (books[key].title.toLowerCase() === titleParam) {
-            matchingBooks.push({ isbn: key, ...books[key] });
-        }
-      });
-      if (matchingBooks.length > 0) return res.status(200).send(JSON.stringify(matchingBooks, null, 4));
-      return res.status(404).json({ message: "No books found with this title" });
+      return res.status(500).json({ message: "Error fetching books by title" });
     });
 });
 
