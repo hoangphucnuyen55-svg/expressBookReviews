@@ -46,14 +46,16 @@ public_users.get('/', async function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
   
+  // 1. Explicitly wrap the database lookup inside a JavaScript Promise object
   const findBookByISBN = new Promise((resolve, reject) => {
     if (books[isbn]) {
-      resolve(books[isbn]);
+      resolve(books[isbn]); // Success pathway
     } else {
-      reject("Book not found");
+      reject("Book not found"); // Error pathway
     }
   });
 
+  // 2. Consume the promise using .then() and .catch() to structure the responses
   findBookByISBN
     .then((book) => {
       return res.status(200).send(JSON.stringify(book, null, 4));
